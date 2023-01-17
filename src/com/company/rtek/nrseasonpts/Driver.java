@@ -9,6 +9,7 @@ public class Driver implements Comparable<Driver> {
     protected int lapsRun;
     protected int lapsLed;
     protected int points;
+    protected int playoffPoints = 0;
 
     public Driver(String firstName, String lastName, int number, int lapsRun, int lapsLed, int points) {
         if(NRUtils.isValidString(firstName) && NRUtils.isValidString(lastName) && lapsRun >= 0 && lapsLed >= 0 && points >= 0) {
@@ -76,6 +77,14 @@ public class Driver implements Comparable<Driver> {
         this.points = points;
     }
 
+    public int getPlayoffPoints() {
+        return playoffPoints;
+    }
+
+    public void addPlayoffPoints(int points) {
+        this.playoffPoints += points;
+    }
+
     @Override
     public int hashCode() {
         int hash = 7;
@@ -87,14 +96,15 @@ public class Driver implements Comparable<Driver> {
     public boolean equals(Object obj) {
         if(this == obj)
             return true;
-        if(obj == null || !(obj instanceof Driver))
+        if(!(obj instanceof Driver))
             return false;
 
         Driver driver = (Driver)obj;
         return getFullName().equals(driver.getFullName());
     }
 
+    //change this to match equals
     public int compareTo(Driver driver) {
-        return  driver.getPoints() - this.points;
+        return driver.getFullName().compareTo(this.getFullName());
     }
 }

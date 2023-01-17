@@ -17,14 +17,22 @@ import java.util.Map;
 public class NRUtils {
 
     private static Map<Integer, Integer> pointsMap;
-    private int[] pointsArr = new int[]{185, 170, 165, 160, 155, 150, 146, 142, 138, 134, 130, 127, 124, 121, 118, 115, 112, };
 
-    int winnerPoints0406 = 180;
-    int winnerPoints0710 = 185;
+    private final static int WINNER_0406 = 180;
+    private final static int WINNER_0710 = 185;
+    private final static int[] POINTS_75_10 = new int[]{0, 175, 170, 165, 160, 155, 150, 146, 142, 138, 134, 130, 127, 124, 121, 118, 115, 112, 109, 106, 103, 100, 97, 94, 91, 88, 85, 82, 79, 76, 73, 70, 67, 64, 61, 58, 55, 52, 49, 46, 43, 40, 37, 34};
+    public final static int[] POINTS_11_15 = new int[]{0, 43, 42, 41, 40, 39, 38, 37, 36, 35, 34, 33, 32, 31, 30, 29, 28, 27, 26, 25, 24, 23, 22, 21, 20, 19, 18, 17, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1};
+    public final static int[] POINTS_16 = new int[]{0, 40, 39, 38, 37, 36, 35, 34, 33, 32, 31, 30, 29, 28, 27, 26, 25, 24, 23, 22, 21, 20, 19, 18, 17, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0, 0, 0};
+    public final static int[] POINTS_17 = new int[]{0, 40, 35, 34, 33, 32, 31, 30, 29, 28, 27, 26, 25, 24, 23, 22, 21, 20, 19, 18, 17, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 1, 1, 1, 1, 0, 0, 0};
 
     public static List<SingleRaceDriver> parseHTMLRaceStandings(Document doc, int year) {
         Elements tables = doc.getElementsByTag("tbody");
-        Elements tableRows = tables.get(1).getElementsByTag("tr");
+        Elements tableRows;
+        if(tables.size() == 1) {
+            tableRows = tables.get(0).getElementsByTag("tr");
+        } else {
+            tableRows = tables.get(1).getElementsByTag("tr");
+        }
         List<SingleRaceDriver> drivers = new ArrayList<SingleRaceDriver>();
         for(Element tableRow : tableRows) {
             Elements tableData = tableRow.getElementsByTag("td");
@@ -45,14 +53,19 @@ public class NRUtils {
                     led = Integer.parseInt(tableData.get(6).text());
                 }
                 int points = Integer.parseInt(tableData.get(7).text());
-                //call util to calculate points?
+
+                //calculate race points
                 if(finish == 1 && (year > 2003 && year < 2011)) {
                     points = calculate0410FirstPlacePoints(year, led, mostLapsLed);
                 } else if(year > 2010) {
                     points = calculateDriverPoints(year, finish, led, mostLapsLed);
                 }
+
                 String status = tableData.get(8).text();
                 SingleRaceDriver srDriver = new SingleRaceDriver(fName, lName, status, number, laps, led, points, start, finish, mostLapsLed);
+                if(year > 2016 && finish == 1) {
+                    srDriver.addPlayoffPoints(5);
+                }
                 drivers.add(srDriver);
             }
         }
@@ -76,30 +89,26 @@ public class NRUtils {
 
     private static int calculateDriverPoints(int year, int finish, int led, boolean mostLapsLed) {
         int points = 0;
-        if(year > 2010 && year < 2014) {
 
-        } else if(year == 2014 || year == 2015) {
-
-        } else if(year == 2016) {
-
-        } else if(year >= 2017) {
-            //current system
+        if(year > 2010 && year < 2017) {
+            int win = 3;
+            int lapLed = 1;
+            int mLapsLed = 1;
+            if(year < 2016) {
+                points = POINTS_11_15[finish];
+            } else {
+                points = POINTS_16[finish];
+            }
+            if(finish == 1) points += win;
+            if(led > 0) points += lapLed;
+            if(mostLapsLed) points += mLapsLed;
+        } else {
+            points = POINTS_17[finish];
+            if(finish == 1) {
+                points += 5;
+            }
         }
         return points;
-    }
-
-    public static Map<Integer, Integer> getPointsMap(int year) {
-        pointsMap = new HashMap<Integer, Integer>();
-        if(year > 2003 && year < 2011) {
-            if(year > 2003 && year < 2007)
-                pointsMap.put(1, 180);
-            else
-                pointsMap.put(1, 185);
-
-            pointsMap.put(2, 170);
-
-        }
-        return pointsMap;
     }
 
     public static boolean isValidString(String str) {
@@ -109,13 +118,11 @@ public class NRUtils {
     public static String convertListToJSON(List<FullSeasonDriver> list) {
         GsonBuilder gsonBuilder = new GsonBuilder();
         Gson gson = gsonBuilder.create();
-        String jsonObject = gson.toJson(list);
-        return jsonObject;
+        return gson.toJson(list);
     }
 
     public static String convertListToPrettyJSON(List<FullSeasonDriver> list) {
         Gson prettyGson = new GsonBuilder().setPrettyPrinting().create();
-        String prettyJson = prettyGson.toJson(list);
-        return prettyJson;
+        return prettyGson.toJson(list);
     }
 }
