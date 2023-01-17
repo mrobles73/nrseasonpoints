@@ -150,17 +150,9 @@ public class CupSeason {
                 seasonDriverList.get(i).setNext(0);
             else
                 seasonDriverList.get(i).setNext(seasonDriverList.get(i - 1).getPoints() - seasonDriverList.get(i).getPoints());
-
         }
-        prevStandings[index] = new ArrayList<FullSeasonDriver>(seasonDriverList); //this needs to be a deep copy
-        prevStandings[index] = makeDeepCopyOfStandings(seasonDriverList);
-    }
 
-    public void addDriver(FullSeasonDriver driver) {
-        if(driver != null)
-            seasonDriverList.add(driver);
-        else
-            throw new IllegalArgumentException("Driver passed in is null");
+        prevStandings[index] = makeDeepCopyOfStandings(seasonDriverList);
     }
 
     public List<FullSeasonDriver> getSeasonDriverList() {
@@ -181,6 +173,22 @@ public class CupSeason {
                 System.out.println(driver);
             }
         }
+    }
+
+    public String getAllRacesJSON() {
+        StringBuilder json = new StringBuilder("{");
+        for(int i=0; i<racesRun; i++) {
+            json.append("\"R").append(i + 1).append("\":").append(NRUtils.convertListToJSON(prevStandings[i])).append(",");
+        }
+        return json.deleteCharAt(json.lastIndexOf(",")).append("}").toString();
+    }
+
+    public String getAllRacesPrettyJSON() {
+        StringBuilder json = new StringBuilder("{\n");
+        for(int i=0; i<racesRun; i++) {
+            json.append("\"R").append(i + 1).append("\": ").append(NRUtils.convertListToPrettyJSON(prevStandings[i])).append(",\n");
+        }
+        return json.deleteCharAt(json.lastIndexOf(",")).append("}").toString();
     }
 
     public void setWildCardAndPlayoffs(ArrayList<FullSeasonDriver> fsDriversArr, int raceNum) {

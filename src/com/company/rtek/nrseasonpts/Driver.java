@@ -22,7 +22,6 @@ public class Driver implements Comparable<Driver> {
         } else {
             throw new IllegalArgumentException("Invalid parameters passed to Driver constructor");
         }
-
     }
 
     public String getFullName() {
@@ -103,7 +102,6 @@ public class Driver implements Comparable<Driver> {
         return getFullName().equals(driver.getFullName());
     }
 
-    //change this to match equals
     public int compareTo(Driver driver) {
         return driver.getFullName().compareTo(this.getFullName());
     }

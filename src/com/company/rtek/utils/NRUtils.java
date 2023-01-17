@@ -9,8 +9,10 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -124,5 +126,20 @@ public class NRUtils {
     public static String convertListToPrettyJSON(List<FullSeasonDriver> list) {
         Gson prettyGson = new GsonBuilder().setPrettyPrinting().create();
         return prettyGson.toJson(list);
+    }
+
+    public static String getSeasonJSONString(int year, String series, String... fileNames) {
+        String toReturn = "";
+        try {
+            CupSeason season = new CupSeason(year);
+            for(int i=0; i<fileNames.length; i++) {
+                List<SingleRaceDriver> raceResultsList = NRUtils.parseHTMLRaceStandings(FileUtils.readInHTMLToDocument("C:\\Papyrus\\NASCAR Racing 2003 Season\\exports_imports\\"+fileNames[i]+".html"), season.getYear());
+                season.addRace(raceResultsList, i);
+            }
+            toReturn = season.getAllRacesJSON();
+        } catch (Exception e) {
+            toReturn = "{ \"error\":true,\"message\":\"" +e.getMessage() + "\" }";
+        }
+        return toReturn;
     }
 }

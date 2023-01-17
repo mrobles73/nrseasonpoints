@@ -7,7 +7,7 @@ import java.io.*;
 
 public class FileUtils {
 
-    public static Document readInHTMLToDocument(String filePath) throws FileNotFoundException, IOException {
+    public static Document readInHTMLToDocument(String filePath) throws IOException {
         File input = new File(filePath);
         Document doc = Jsoup.parse(input, "UTF-8");
         return doc;

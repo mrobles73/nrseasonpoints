@@ -17,8 +17,6 @@ public class FullSeasonDriver extends Driver{
     private int dnf;
     private int pointsPosition;
     private int playoffWins = 0;
-
-    //if driver is put in post season, have points that track them all the way to round of 4
     private int seasonPlayoffPoints;
 
     private static final DecimalFormat decFormat = new DecimalFormat("0.00");
@@ -197,7 +195,6 @@ public class FullSeasonDriver extends Driver{
     public double getAvgFinish() {
         return avgFinish;
     }
-
 
     @Override
     public String toString() {
