@@ -1,6 +1,6 @@
-package com.company.rtek.nrseasonpts;
+package com.rtek.nrseasonpts;
 
-import com.company.rtek.utils.NRUtils;
+import com.rtek.nrseasonpts.utils.NRUtils;
 
 public class SingleRaceDriver extends Driver{
     private String status;

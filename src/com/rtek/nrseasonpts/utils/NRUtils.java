@@ -1,17 +1,14 @@
-package com.company.rtek.utils;
+package com.rtek.nrseasonpts.utils;
 
-import com.company.rtek.nrseasonpts.CupSeason;
-import com.company.rtek.nrseasonpts.FullSeasonDriver;
-import com.company.rtek.nrseasonpts.SingleRaceDriver;
+import com.rtek.nrseasonpts.CupSeason;
+import com.rtek.nrseasonpts.FullSeasonDriver;
+import com.rtek.nrseasonpts.SingleRaceDriver;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -28,6 +25,10 @@ public class NRUtils {
     public final static int[] POINTS_17 = new int[]{0, 40, 35, 34, 33, 32, 31, 30, 29, 28, 27, 26, 25, 24, 23, 22, 21, 20, 19, 18, 17, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 1, 1, 1, 1, 0, 0, 0};
 
     public static List<SingleRaceDriver> parseHTMLRaceStandings(Document doc, int year) {
+        Elements h3 = doc.getElementsByTag("h3");
+        String track = h3.get(0).text();
+        String date = h3.get(1).text();
+
         Elements tables = doc.getElementsByTag("tbody");
         Elements tableRows;
         if(tables.size() == 1) {
@@ -42,6 +43,7 @@ public class NRUtils {
                 String [] driverName = tableData.get(3).text().trim().split(" ");
                 String fName = driverName[0];
                 String lName = driverName[1];
+                if(driverName.length == 3) lName += " " + driverName[2];
                 int finish = Integer.parseInt(tableData.get(0).text());
                 int start = Integer.parseInt(tableData.get(1).text());
                 int number = Integer.parseInt(tableData.get(2).text());
@@ -131,15 +133,78 @@ public class NRUtils {
     public static String getSeasonJSONString(int year, String series, String... fileNames) {
         String toReturn = "";
         try {
-            CupSeason season = new CupSeason(year);
+            CupSeason season = new CupSeason(year, series);
             for(int i=0; i<fileNames.length; i++) {
-                List<SingleRaceDriver> raceResultsList = NRUtils.parseHTMLRaceStandings(FileUtils.readInHTMLToDocument("C:\\Papyrus\\NASCAR Racing 2003 Season\\exports_imports\\"+fileNames[i]+".html"), season.getYear());
-                season.addRace(raceResultsList, i);
+                List<SingleRaceDriver> raceResultsList = NRUtils.parseHTMLRaceStandings(FileUtils.readInHTMLToDocument("C:\\Papyrus\\NASCAR Racing 2003 Season\\exports_imports\\"+fileNames[i]+".html", "PATH"), season.getYear());
+                //season.addRace(raceResultsList, i);
+                season.addRace(raceResultsList);
             }
-            toReturn = season.getAllRacesJSON();
+            //toReturn = season.getAllRacesJSON();
+            toReturn = season.getAllRacesPrettyJSON();
         } catch (Exception e) {
             toReturn = "{ \"error\":true,\"message\":\"" +e.getMessage() + "\" }";
         }
         return toReturn;
+    }
+
+    public static List<FullSeasonDriver>[] getSeasonStandingsArray(int year, String series, String... files) {
+        try {
+            CupSeason season = new CupSeason(year, series);
+            for(int i=0; i<files.length; i++) {
+                List<SingleRaceDriver> raceResultsList = NRUtils.parseHTMLRaceStandings(FileUtils.readInHTMLToDocument(files[i], "STRING"), season.getYear());
+                //season.addRace(raceResultsList, i);
+                season.addRace(raceResultsList);
+            }
+            return season.getAllStandings();
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public static CupSeason getSeason(int year, String series, String... files) {
+        try {
+            CupSeason season = new CupSeason(year, series);
+            for(int i=0; i<files.length; i++) {
+                List<SingleRaceDriver> raceResultsList = NRUtils.parseHTMLRaceStandings(FileUtils.readInHTMLToDocument(files[i], "STRING"), season.getYear());
+                //season.addRace(raceResultsList, i);
+                season.addRace(raceResultsList);
+            }
+            return season;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public static List<List<FullSeasonDriver>> addRacesToSeason(CupSeason season, String[] files) {
+        try {
+            for(int i=0; i<files.length; i++) {
+                List<SingleRaceDriver> raceResultsList = NRUtils.parseHTMLRaceStandings(FileUtils.readInHTMLToDocument(files[i], "STRING"), season.getYear());
+                season.addRace(raceResultsList);
+            }
+            List<List<FullSeasonDriver>> list = new ArrayList<>();
+            List<List<FullSeasonDriver>> curStandings = season.getAllStandingsAL();
+            for(int i=(curStandings.size()-files.length); i<curStandings.size(); i++) {
+                list.add(curStandings.get(i));
+            }
+            return list;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public static void printSeasonResults(int year, String series, String... fileNames) {
+        try {
+            CupSeason season = new CupSeason(year, series);
+            for(int i=0; i<fileNames.length; i++) {
+                List<SingleRaceDriver> raceResultsList = NRUtils.parseHTMLRaceStandings(FileUtils.readInHTMLToDocument("C:\\Papyrus\\NASCAR Racing 2003 Season\\exports_imports\\"+fileNames[i]+".html", "PATH"), season.getYear());
+                //season.addRace(raceResultsList, i);
+                season.addRace(raceResultsList);
+            }
+            season.printOutSeasonDriverList();
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+
     }
 }

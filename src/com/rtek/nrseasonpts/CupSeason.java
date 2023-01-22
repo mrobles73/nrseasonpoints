@@ -1,27 +1,36 @@
-package com.company.rtek.nrseasonpts;
+package com.rtek.nrseasonpts;
 
-import com.company.rtek.utils.NRUtils;
+import com.rtek.nrseasonpts.utils.NRUtils;
 
 import java.util.*;
 
 public class CupSeason {
-    private final int NUMBER_OF_RACES = 36;
     private final int YEAR;
     private int racesRun = 0;
+    private String[] raceTracks;
     private List<FullSeasonDriver> seasonDriverList = new ArrayList<FullSeasonDriver>();
-
-    private List<SingleRaceDriver>[] races = new List[NUMBER_OF_RACES];
-    private List<FullSeasonDriver>[] prevStandings = new ArrayList[NUMBER_OF_RACES];
+    private final List<SingleRaceDriver>[] races;
+    private List<List<SingleRaceDriver>> alRaces = new ArrayList<List<SingleRaceDriver>>();
+    private final List<FullSeasonDriver>[] prevStandings;
+    private List<List<FullSeasonDriver>> alPrevStandings = new ArrayList<List<FullSeasonDriver>>();
 
     private final int[] TOP_10_RESET_0406 = new int[]{5050, 5045, 5040, 5035, 5030, 5025, 5020, 5015, 5010, 5005};
     private final int[] TOP_10_POINTS_17 = new int[]{0, 15, 10, 9, 8, 7, 6, 5, 4, 3, 2};
 
-    public CupSeason(int year) {
-        if(year > 1974) {
+    public CupSeason(int year, String series) {
+        if(year > 1974)
             this.YEAR = year;
-        } else {
+        else
             throw new IllegalArgumentException(year + " not a valid year");
+
+        if(series.equals("Cup")) {
+            races = new List[36];
+            prevStandings = new ArrayList[36];
+            raceTracks = new String[36];
+        } else {
+            throw new IllegalArgumentException("Race Number needs to be more than 0");
         }
+
     }
 
     public int getYear() {
@@ -32,8 +41,10 @@ public class CupSeason {
         racesRun++;
     }
 
-    public void addRace(List<SingleRaceDriver> race, int index) {
-        races[index] = race;
+    public void addRace(List<SingleRaceDriver> race) {//, int index) {
+        //races[index] = race;
+        alRaces.add(race);
+        //raceTracks[index] = race.get(0).getRaceTrack();
         incrementRacesRun();
         if(racesRun == 1) {
             //add all the drivers in the race to the list of full season drivers
@@ -48,6 +59,7 @@ public class CupSeason {
                     int i = seasonDriverList.indexOf(driver);
                     FullSeasonDriver fsDriver = seasonDriverList.get(i);
 
+                    fsDriver.setNumber(driver.getNumber());
                     fsDriver.incrementRacesRun();
                     if(YEAR > 2013 && racesRun == 36 && fsDriver.isInPostSeason()) {
                         if(YEAR < 2016) {
@@ -106,21 +118,18 @@ public class CupSeason {
                             }
                         }
                     } else if(YEAR > 2013 && (racesRun == 29 || racesRun == 32 || racesRun == 35)) {
-                        int cutoff = 13, subtractPoints = 0;
+                        int cutoff = 13;
                         if(racesRun == 32) {
                             cutoff = 9;
-                            subtractPoints = 1000;
                         }
                         if(racesRun == 35) {
                             cutoff = 5;
-                            subtractPoints = 2000;
                         }
                         if(fsDriver.getPointsPosition() < cutoff || (fsDriver.isInPostSeason() && fsDriver.getPlayoffWins() > 0)) {
                             fsDriversArr.add(fsDriver);
                         } else if(fsDriver.isInPostSeason()){
                             fsDriver.removeFromPostSeason();
-                            fsDriver.setPoints(fsDriver.getSeasonPlayoffPoints()); //setting points back if they are out of playoffs
-                            //fsDriver.subtractPoints(subtractPoints);
+                            fsDriver.setPoints(fsDriver.getSeasonPlayoffPoints());
                         }
                     }
 
@@ -141,7 +150,7 @@ public class CupSeason {
 
         }
 
-        //loop through seasonDriverList and set driver's points position, maybe calculate next and leader points here
+        //loop through seasonDriverList and set driver's points position, calculate next and leader points here
         Collections.sort(seasonDriverList, new FullSeasonDriver.SortByPoints());
         for(int i = 0; i<seasonDriverList.size(); i++) {
             seasonDriverList.get(i).setPointsPosition(i+1);
@@ -152,11 +161,20 @@ public class CupSeason {
                 seasonDriverList.get(i).setNext(seasonDriverList.get(i - 1).getPoints() - seasonDriverList.get(i).getPoints());
         }
 
-        prevStandings[index] = makeDeepCopyOfStandings(seasonDriverList);
+        //prevStandings[index] = makeDeepCopyOfStandings(seasonDriverList);
+        alPrevStandings.add(makeDeepCopyOfStandings(seasonDriverList));
     }
 
     public List<FullSeasonDriver> getSeasonDriverList() {
         return this.seasonDriverList;
+    }
+
+    public List<FullSeasonDriver>[] getAllStandings() {
+        return this.prevStandings;
+    }
+
+    public List<List<FullSeasonDriver>> getAllStandingsAL() {
+        return this.alPrevStandings;
     }
 
     public void printOutSeasonDriverList() {

@@ -1,6 +1,6 @@
-package com.company.rtek.nrseasonpts;
+package com.rtek.nrseasonpts;
 
-import com.company.rtek.utils.NRUtils;
+import com.rtek.nrseasonpts.utils.NRUtils;
 
 public class Driver implements Comparable<Driver> {
     protected String firstName;
@@ -10,6 +10,7 @@ public class Driver implements Comparable<Driver> {
     protected int lapsLed;
     protected int points;
     protected int playoffPoints = 0;
+    //private List<Integer> numbers = new ArrayList<Integer>();
 
     public Driver(String firstName, String lastName, int number, int lapsRun, int lapsLed, int points) {
         if(NRUtils.isValidString(firstName) && NRUtils.isValidString(lastName) && lapsRun >= 0 && lapsLed >= 0 && points >= 0) {
@@ -19,6 +20,7 @@ public class Driver implements Comparable<Driver> {
             this.lapsRun = lapsRun;
             this.lapsLed = lapsLed;
             this.points = points;
+            //numbers.add(number);
         } else {
             throw new IllegalArgumentException("Invalid parameters passed to Driver constructor");
         }
@@ -83,6 +85,11 @@ public class Driver implements Comparable<Driver> {
     public void addPlayoffPoints(int points) {
         this.playoffPoints += points;
     }
+
+//    public void addNumber(int number) {
+//        numbers.add(number);
+//        this.number = number;
+//    }
 
     @Override
     public int hashCode() {

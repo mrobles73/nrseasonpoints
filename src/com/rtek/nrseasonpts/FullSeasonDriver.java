@@ -1,4 +1,4 @@
-package com.company.rtek.nrseasonpts;
+package com.rtek.nrseasonpts;
 
 import java.text.DecimalFormat;
 import java.util.Comparator;
@@ -144,6 +144,10 @@ public class FullSeasonDriver extends Driver{
         return wins;
     }
 
+    public int getWins() {
+        return wins;
+    }
+
     public void incrementT5() {
         t5++;
     }
@@ -168,6 +172,10 @@ public class FullSeasonDriver extends Driver{
         return dnf;
     }
 
+    public int getDnf() {
+        return dnf;
+    }
+
     public void incrementPlayoffWins() {
         playoffWins++;
     }
@@ -185,7 +193,7 @@ public class FullSeasonDriver extends Driver{
     }
 
     public double getAvgStart() {
-        return avgStart;
+        return Double.parseDouble(decFormat.format(avgStart));
     }
 
     public void calcAvgFinish(int finish) {
@@ -193,6 +201,10 @@ public class FullSeasonDriver extends Driver{
     }
 
     public double getAvgFinish() {
+        return Double.parseDouble(decFormat.format(avgFinish));
+    }
+
+    public double getFullAvgFinish() {
         return avgFinish;
     }
 
@@ -209,7 +221,7 @@ public class FullSeasonDriver extends Driver{
             if(ret == 0)
                 ret = Integer.compare(driverTwo.getPoints(), driverOne.getPoints());
             if(ret == 0)
-                ret = Double.compare(driverOne.getAvgFinish(), driverTwo.getAvgFinish());
+                ret = Double.compare(driverOne.getFullAvgFinish(), driverTwo.getFullAvgFinish());
             if(ret == 0)
                 ret = (driverTwo.getT5() != driverOne.getT5()) ? Integer.compare(driverTwo.getT5(), driverOne.getT5()) : Integer.compare(driverTwo.getT10(), driverOne.getT10());
 
@@ -230,7 +242,7 @@ public class FullSeasonDriver extends Driver{
             if(ret == 0)
                 ret = Integer.compare(driverTwo.getPoints(), driverOne.getPoints());
             if(ret == 0)
-                ret = Double.compare(driverOne.getAvgFinish(), driverTwo.getAvgFinish());
+                ret = Double.compare(driverOne.getFullAvgFinish(), driverTwo.getFullAvgFinish());
             if(ret == 0)
                 ret = (driverTwo.getT5() != driverOne.getT5()) ? Integer.compare(driverTwo.getT5(), driverOne.getT5()) : Integer.compare(driverTwo.getT10(), driverOne.getT10());
 
@@ -249,7 +261,7 @@ public class FullSeasonDriver extends Driver{
             if(ret == 0)
                 ret = Integer.compare(driverTwo.getWinCount(), driverOne.getWinCount());
             if(ret == 0)
-                ret = Double.compare(driverOne.getAvgFinish(), driverTwo.getAvgFinish());
+                ret = Double.compare(driverOne.getFullAvgFinish(), driverTwo.getFullAvgFinish());
             if(ret == 0)
                 ret = (driverTwo.getT5() != driverOne.getT5()) ? Integer.compare(driverTwo.getT5(), driverOne.getT5()) : Integer.compare(driverTwo.getT10(), driverOne.getT10());
 
