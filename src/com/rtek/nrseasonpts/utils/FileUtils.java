@@ -12,7 +12,7 @@ public class FileUtils {
         if(type.equals("PATH")) {
             File input = new File(file);
             doc = Jsoup.parse(input, "UTF-8");
-        } else if(type.equals("STRING")) {
+        } else if(type.equals("CONTENT")) {
             doc = Jsoup.parse(file);
         }
         return doc;

@@ -18,7 +18,6 @@ public class FullSeasonDriver extends Driver{
     private int pointsPosition;
     private int playoffWins = 0;
     private int seasonPlayoffPoints;
-
     private static final DecimalFormat decFormat = new DecimalFormat("0.00");
 
     public FullSeasonDriver(String firstName, String lastName, int number, int lapsRun, int lapsLed, int points, int start, int finish, String status) {
@@ -215,7 +214,6 @@ public class FullSeasonDriver extends Driver{
 
     //official tiebreakers is number of finishes from 1 to 40* but i'll just be using wins to avg finish
     public static class SortByWinsThenPoints implements Comparator<FullSeasonDriver> {
-        //should sort by wins, then points, then t5, then t10
         public int compare(FullSeasonDriver driverOne, FullSeasonDriver driverTwo) {
             int ret = Integer.compare(driverTwo.getWinCount(), driverOne.getWinCount());
             if(ret == 0)
@@ -226,12 +224,6 @@ public class FullSeasonDriver extends Driver{
                 ret = (driverTwo.getT5() != driverOne.getT5()) ? Integer.compare(driverTwo.getT5(), driverOne.getT5()) : Integer.compare(driverTwo.getT10(), driverOne.getT10());
 
             return ret;
-
-//            if(driverOne.getWinCount() != driverTwo.getWinCount()) {
-//                return driverTwo.getWinCount() - driverOne.getWinCount();
-//            } else {
-//                return driverTwo.getPoints() - driverOne.getPoints();
-//            }
         }
     }
 
@@ -247,11 +239,6 @@ public class FullSeasonDriver extends Driver{
                 ret = (driverTwo.getT5() != driverOne.getT5()) ? Integer.compare(driverTwo.getT5(), driverOne.getT5()) : Integer.compare(driverTwo.getT10(), driverOne.getT10());
 
             return ret;
-//            if(driverOne.getPlayoffWins() != driverTwo.getPlayoffWins()) {
-//                return driverTwo.getPlayoffWins() - driverOne.getPlayoffWins();
-//            } else {
-//                return driverTwo.getPoints() - driverOne.getPoints();
-//            }
         }
     }
 

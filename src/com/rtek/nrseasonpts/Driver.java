@@ -10,7 +10,7 @@ public class Driver implements Comparable<Driver> {
     protected int lapsLed;
     protected int points;
     protected int playoffPoints = 0;
-    //private List<Integer> numbers = new ArrayList<Integer>();
+    private String raceTrack;
 
     public Driver(String firstName, String lastName, int number, int lapsRun, int lapsLed, int points) {
         if(NRUtils.isValidString(firstName) && NRUtils.isValidString(lastName) && lapsRun >= 0 && lapsLed >= 0 && points >= 0) {
@@ -20,9 +20,8 @@ public class Driver implements Comparable<Driver> {
             this.lapsRun = lapsRun;
             this.lapsLed = lapsLed;
             this.points = points;
-            //numbers.add(number);
         } else {
-            throw new IllegalArgumentException("Invalid parameters passed to Driver constructor");
+            throw new IllegalArgumentException("Invalid parameters for Driver constructor");
         }
     }
 
@@ -86,10 +85,13 @@ public class Driver implements Comparable<Driver> {
         this.playoffPoints += points;
     }
 
-//    public void addNumber(int number) {
-//        numbers.add(number);
-//        this.number = number;
-//    }
+    public void setRaceTrack(String raceTrack) {
+        this.raceTrack = raceTrack;
+    }
+
+    public String getRaceTrack() {
+        return this.raceTrack;
+    }
 
     @Override
     public int hashCode() {

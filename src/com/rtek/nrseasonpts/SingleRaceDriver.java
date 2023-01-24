@@ -16,7 +16,7 @@ public class SingleRaceDriver extends Driver{
             this.finish = finish;
             this.mostLapsLed = mostLapsLed;
         } else {
-            throw new IllegalArgumentException("Invalid String parameters passed to SingleRaceDriver constructor");
+            throw new IllegalArgumentException("Invalid value for 'status' parameter.");
         }
     }
 
@@ -54,7 +54,7 @@ public class SingleRaceDriver extends Driver{
 
     @Override
     public String toString() {
-        return "F: " + finish + " | S: " + start + " | #" + number + " | Driver: " + firstName + " " + lastName + " | Laps Run: " + lapsRun + " | Laps Led: " + lapsLed + " | " + mostLapsLed;
+        return "F: " + finish + " | S: " + start + " | #" + number + " | Driver: " + firstName + " " + lastName + " | Laps Run: " + lapsRun + " | Laps Led: " + lapsLed + " | Points: " + points + " | Status: " + status;
     }
 
 
