@@ -1,6 +1,6 @@
-package com.company.rtek.nrseasonpts;
+package com.rtek.nrseasonpts;
 
-import com.company.rtek.utils.NRUtils;
+import com.rtek.nrseasonpts.utils.NRUtils;
 
 public class Driver implements Comparable<Driver> {
     protected String firstName;
@@ -9,6 +9,8 @@ public class Driver implements Comparable<Driver> {
     protected int lapsRun;
     protected int lapsLed;
     protected int points;
+    protected int playoffPoints = 0;
+    private String raceTrack;
 
     public Driver(String firstName, String lastName, int number, int lapsRun, int lapsLed, int points) {
         if(NRUtils.isValidString(firstName) && NRUtils.isValidString(lastName) && lapsRun >= 0 && lapsLed >= 0 && points >= 0) {
@@ -19,9 +21,8 @@ public class Driver implements Comparable<Driver> {
             this.lapsLed = lapsLed;
             this.points = points;
         } else {
-            throw new IllegalArgumentException("Invalid parameters passed to Driver constructor");
+            throw new IllegalArgumentException("Invalid parameters for Driver constructor");
         }
-
     }
 
     public String getFullName() {
@@ -76,6 +77,22 @@ public class Driver implements Comparable<Driver> {
         this.points = points;
     }
 
+    public int getPlayoffPoints() {
+        return playoffPoints;
+    }
+
+    public void addPlayoffPoints(int points) {
+        this.playoffPoints += points;
+    }
+
+    public void setRaceTrack(String raceTrack) {
+        this.raceTrack = raceTrack;
+    }
+
+    public String getRaceTrack() {
+        return this.raceTrack;
+    }
+
     @Override
     public int hashCode() {
         int hash = 7;
@@ -87,7 +104,7 @@ public class Driver implements Comparable<Driver> {
     public boolean equals(Object obj) {
         if(this == obj)
             return true;
-        if(obj == null || !(obj instanceof Driver))
+        if(!(obj instanceof Driver))
             return false;
 
         Driver driver = (Driver)obj;
@@ -95,6 +112,6 @@ public class Driver implements Comparable<Driver> {
     }
 
     public int compareTo(Driver driver) {
-        return  driver.getPoints() - this.points;
+        return driver.getFullName().compareTo(this.getFullName());
     }
 }
